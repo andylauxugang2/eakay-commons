@@ -1,0 +1,23 @@
+<included>
+	<appender name="PerformanceLogAppender"
+		class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<fileNamePattern>${logs.path}/${app.name}-perf.%d{yyyyMMdd}.log</fileNamePattern>
+			<maxHistory>30</maxHistory>
+		</rollingPolicy>
+		<encoder>
+			<pattern>%d{yyyyMMdd'T'HH:mm:ss.SSS'Z'} - %m%n</pattern>
+		</encoder>
+	</appender>
+
+	<appender name="AsyncPerformanceLogAppender" class="ch.qos.logback.classic.AsyncAppender">
+		<queueSize>8192</queueSize>
+		<discardingThreshold>0</discardingThreshold>
+		<appender-ref ref="PerformanceLogAppender" />
+	</appender>
+
+	<logger name="com.ksc.iam.aop.performance.PerformanceLogUtils"
+		level="INFO" additivity="false">
+		<appender-ref ref="AsyncPerformanceLogAppender" />
+	</logger>
+</included>
