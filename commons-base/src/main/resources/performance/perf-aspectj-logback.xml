@@ -16,7 +16,7 @@
 		<appender-ref ref="PerformanceLogAppender" />
 	</appender>
 
-	<logger name="com.ksc.iam.aop.performance.PerformanceLogUtils"
+	<logger name="cn.eakay.commons.base.performance.aop.PerformanceLogUtils"
 		level="INFO" additivity="false">
 		<appender-ref ref="AsyncPerformanceLogAppender" />
 	</logger>

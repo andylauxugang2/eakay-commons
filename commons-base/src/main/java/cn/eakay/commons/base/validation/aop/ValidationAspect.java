@@ -36,7 +36,7 @@ public class ValidationAspect {
         return _doParamValidate(pjp, params);
     }
 
-    @Around("execution(public * com.taobao.ato*..ao.impl..*(..)) && args(param)")
+    @Around("execution(public * cn.eakay.*..ao.impl..*(..)) && args(param)")
     public Object doParamValidate(ProceedingJoinPoint pjp, BaseParam param)
             throws Throwable {
         List<BaseParam> params = new ArrayList<>();
