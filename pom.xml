@@ -13,6 +13,7 @@
         <module>commons-base</module>
         <module>commons-mq</module>
         <module>commons-dao</module>
+        <module>commons-utils</module>
     </modules>
 
     <properties>
@@ -59,6 +60,16 @@
             </plugins>
         </pluginManagement>
     </build>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.opensymphony.quartz</groupId>
+                <artifactId>quartz</artifactId>
+                <version>1.6.5</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 
     <dependencies>
         <dependency>
