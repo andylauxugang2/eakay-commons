@@ -12,7 +12,7 @@ import org.apache.commons.codec.binary.Hex;
  * @author hymagic
  *
  */
-public class UtilHash
+public class HashUtil
 {
 	
 	public  final static  String SHA1="SHA-1";
