@@ -3,7 +3,6 @@
 	xmlns:xsd="http://www.w3.org/2001/XMLSchema" targetNamespace="http://www.eakay.cn/schema/commons-job-ext"
 	elementFormDefault="qualified" attributeFormDefault="unqualified">
 
-	<!-- spring-quartz.xml配置文件元素定义 -->
 	<xsd:element name="scan">
 		<xsd:complexType>
 			<xsd:sequence>
