@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:commons-job-ext="http://www.eakay.cn/schema/commons-job-ext"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+		http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
+		http://www.eakay.cn/schema/commons-job-ext
+	    http://www.eakay.cn/schema/spring-ext/quartz-ext.xsd"
+       default-autowire="no" default-lazy-init="true">
+
+    <!-- 自定义scanner -->
+    <commons-job-ext:scan scanner="cn.eakay.commons.job.base.quartz.QuartzScannerConfigurer">
+        <commons-job-ext:property key="basePackage" value="cn.eakay.commons.job.base.quartz" />
+        <commons-job-ext:property key="autoStartUp" value="true" />
+    </commons-job-ext:scan>
+
+</beans>
