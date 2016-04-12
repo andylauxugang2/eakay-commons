@@ -2,6 +2,8 @@ package cn.eakay.commons.job;
 
 import cn.eakay.commons.job.base.quartz.Cron;
 import lombok.extern.slf4j.Slf4j;
+import org.quartz.JobExecutionContext;
+import org.quartz.JobExecutionException;
 
 /**
  * demo job 示例
@@ -29,5 +31,4 @@ public class DemoJob extends BaseJob {
         System.out.println("------------"+System.currentTimeMillis() / 1000+"-----------");
         log.info("end DriverComplainPunishJob");
     }
-
 }
