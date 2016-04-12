@@ -1071,6 +1071,7 @@ public class JedisUtils
 	 * @param jedis
 	 * @param isBroken
 	 */
+	@SuppressWarnings("deprecation")
 	public static void returnBrokenResource(Jedis jedis)
 	{
 		if (jedis != null)
@@ -1085,6 +1086,7 @@ public class JedisUtils
 	 * @param jedis
 	 * @param isBroken
 	 */
+	@SuppressWarnings("deprecation")
 	public static void returnResource(Jedis jedis)
 	{
 		if (jedis != null)

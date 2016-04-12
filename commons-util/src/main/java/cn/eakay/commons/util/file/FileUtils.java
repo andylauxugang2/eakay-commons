@@ -582,7 +582,7 @@ public class FileUtils extends org.apache.commons.io.FileUtils {
 	 * @param file entry文件名
 	 * @return
 	 */
-	private static String getEntryName(String dirPath, File file) {
+/*	private static String getEntryName(String dirPath, File file) {
 		String dirPaths = dirPath;
 		if (!dirPaths.endsWith(File.separator)) {
 			dirPaths = dirPaths + File.separator;
@@ -595,7 +595,7 @@ public class FileUtils extends org.apache.commons.io.FileUtils {
 		int index = filePath.indexOf(dirPaths);
 
 		return filePath.substring(index + dirPaths.length());
-	}
+	}*/
 	
 	/**
 	 * 修复路径，将 \\ 或 / 等替换为 File.separator
