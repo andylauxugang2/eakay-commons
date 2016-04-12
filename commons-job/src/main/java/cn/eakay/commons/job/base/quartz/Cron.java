@@ -25,6 +25,8 @@ import java.lang.annotation.Target;
  */
 public @interface Cron {
 	// 0 */1 * * * ?"
-	String value(); //
-	String desc();
+	String value(); //任务时间表达式
+	String desc(); //描述
+	String group() default "eakay";
+
 }
