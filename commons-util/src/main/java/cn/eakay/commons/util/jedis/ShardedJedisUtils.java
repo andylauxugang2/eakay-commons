@@ -10,14 +10,15 @@ import cn.eakay.commons.util.config.Global;
 import cn.eakay.commons.util.object.ObjectUtils;
 import cn.eakay.commons.util.string.StringUtils;
 import lombok.extern.slf4j.Slf4j;
-import redis.clients.jedis.Jedis;
-import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPoolConfig;
+import redis.clients.jedis.JedisShardInfo;
+import redis.clients.jedis.ShardedJedis;
+import redis.clients.jedis.ShardedJedisPool;
 import redis.clients.jedis.exceptions.JedisException;
 
 
 /**
- * Jedis Cache 工具类
+ * 分布式 Jedis Cache 工具类
  * 
  * @author hymagic
  * @version 2014-6-29 resources文件中放置 eakey.properties 參見 Global中
@@ -25,16 +26,17 @@ import redis.clients.jedis.exceptions.JedisException;
  *          redis.port=6379 redis.timeout=300
  */
 @Slf4j
-public class JedisUtils
+public class ShardedJedisUtils
 {
 
 	public static final String KEY_PREFIX = Global.getConfig("redis.keyPrefix");
 	public static final String HOST = Global.getConfig("redis.host");
 	public static final Integer PORT = Integer.valueOf(Global.getConfig("redis.port"));
 	public static final Integer TIME_OUT = Integer.valueOf(Global.getConfig("redis.timeout"));
-	// 常规pool
-	private static JedisPool jedisPool = null;
-
+	
+	// 切片pool
+	private static ShardedJedisPool shardedJedisPool = null;
+	
 
 	static
 	{
@@ -47,9 +49,9 @@ public class JedisUtils
 	private static synchronized void poolInit()
 	{
 		
-			if (jedisPool == null)
+			if (shardedJedisPool == null)
 			{
-				initialPool();
+				initialShardedPool();
 			}
 	
 		
@@ -57,9 +59,9 @@ public class JedisUtils
 	}
 
 	/**
-	 * 初始化Redis连接池
+	 * 初始化切片池
 	 */
-	private static void initialPool()
+	private static void initialShardedPool()
 	{
 		try
 		{
@@ -72,12 +74,18 @@ public class JedisUtils
 			config.setMaxWaitMillis(1000 * 100);
 			// 在borrow一个jedis实例时，是否提前进行validate操作；如果为true，则得到的jedis实例均是可用的；
 			config.setTestOnBorrow(true);
-			jedisPool = new JedisPool(config, HOST, PORT, TIME_OUT);
-
+			// slave链接
+			List<JedisShardInfo> shards = new ArrayList<JedisShardInfo>();
+            //可配置多个连接
+			//shards.add(new JedisShardInfo(HOST, PORT, TIME_OUT, "master"));
+			shards.add(new JedisShardInfo(HOST, PORT, TIME_OUT, "master"));
+			// 构造池
+			shardedJedisPool = new ShardedJedisPool(config, shards);
 		} catch (Exception e)
 		{
-			log.error("Create JedisPool error : ", e);
+			log.error("Create ShardedJedisPool error : ", e);
 		}
+		
 	}
 
 	/**
@@ -90,7 +98,7 @@ public class JedisUtils
 	public static String get(String key)
 	{
 		String value = null;
-		Jedis jedis = null;
+		ShardedJedis jedis = null;
 		try
 		{
 			jedis = getResource();
@@ -120,7 +128,7 @@ public class JedisUtils
 	public static Object getObject(String key)
 	{
 		Object value = null;
-		Jedis jedis = null;
+		ShardedJedis jedis = null;
 		try
 		{
 			jedis = getResource();
@@ -153,7 +161,7 @@ public class JedisUtils
 	public static String set(String key, String value, int cacheSeconds)
 	{
 		String result = null;
-		Jedis jedis = null;
+		ShardedJedis jedis = null;
 		try
 		{
 			jedis = getResource();
@@ -187,7 +195,7 @@ public class JedisUtils
 	public static String setObject(String key, Object value, int cacheSeconds)
 	{
 		String result = null;
-		Jedis jedis = null;
+		ShardedJedis jedis = null;
 		try
 		{
 			jedis = getResource();
@@ -217,7 +225,7 @@ public class JedisUtils
 	public static List<String> getList(String key)
 	{
 		List<String> value = null;
-		Jedis jedis = null;
+		ShardedJedis jedis = null;
 		try
 		{
 			jedis = getResource();
@@ -246,7 +254,7 @@ public class JedisUtils
 	public static List<Object> getObjectList(String key)
 	{
 		List<Object> value = null;
-		Jedis jedis = null;
+		ShardedJedis jedis = null;
 		try
 		{
 			jedis = getResource();
@@ -284,7 +292,7 @@ public class JedisUtils
 	public static long setList(String key, List<String> value, int cacheSeconds)
 	{
 		long result = 0;
-		Jedis jedis = null;
+		ShardedJedis jedis = null;
 		try
 		{
 			jedis = getResource();
@@ -322,7 +330,7 @@ public class JedisUtils
 	public static long setObjectList(String key, List<Object> value, int cacheSeconds)
 	{
 		long result = 0;
-		Jedis jedis = null;
+		ShardedJedis jedis = null;
 		try
 		{
 			jedis = getResource();
@@ -363,7 +371,7 @@ public class JedisUtils
 	public static long listAdd(String key, String... value)
 	{
 		long result = 0;
-		Jedis jedis = null;
+		ShardedJedis jedis = null;
 		try
 		{
 			jedis = getResource();
@@ -391,7 +399,7 @@ public class JedisUtils
 	public static long listObjectAdd(String key, Object... value)
 	{
 		long result = 0;
-		Jedis jedis = null;
+		ShardedJedis jedis = null;
 		try
 		{
 			jedis = getResource();
@@ -422,7 +430,7 @@ public class JedisUtils
 	public static Set<String> getSet(String key)
 	{
 		Set<String> value = null;
-		Jedis jedis = null;
+		ShardedJedis jedis = null;
 		try
 		{
 			jedis = getResource();
@@ -451,7 +459,7 @@ public class JedisUtils
 	public static Set<Object> getObjectSet(String key)
 	{
 		Set<Object> value = null;
-		Jedis jedis = null;
+		ShardedJedis jedis = null;
 		try
 		{
 			jedis = getResource();
@@ -489,7 +497,7 @@ public class JedisUtils
 	public static long setSet(String key, Set<String> value, int cacheSeconds)
 	{
 		long result = 0;
-		Jedis jedis = null;
+		ShardedJedis jedis = null;
 		try
 		{
 			jedis = getResource();
@@ -527,7 +535,7 @@ public class JedisUtils
 	public static long setObjectSet(String key, Set<Object> value, int cacheSeconds)
 	{
 		long result = 0;
-		Jedis jedis = null;
+		ShardedJedis jedis = null;
 		try
 		{
 			jedis = getResource();
@@ -568,7 +576,7 @@ public class JedisUtils
 	public static long setSetAdd(String key, String... value)
 	{
 		long result = 0;
-		Jedis jedis = null;
+		ShardedJedis jedis = null;
 		try
 		{
 			jedis = getResource();
@@ -596,7 +604,7 @@ public class JedisUtils
 	public static long setSetObjectAdd(String key, Object... value)
 	{
 		long result = 0;
-		Jedis jedis = null;
+		ShardedJedis jedis = null;
 		try
 		{
 			jedis = getResource();
@@ -627,7 +635,7 @@ public class JedisUtils
 	public static Map<String, String> getMap(String key)
 	{
 		Map<String, String> value = null;
-		Jedis jedis = null;
+		ShardedJedis jedis = null;
 		try
 		{
 			jedis = getResource();
@@ -656,7 +664,7 @@ public class JedisUtils
 	public static Map<String, Object> getObjectMap(String key)
 	{
 		Map<String, Object> value = null;
-		Jedis jedis = null;
+		ShardedJedis jedis = null;
 		try
 		{
 			jedis = getResource();
@@ -694,7 +702,7 @@ public class JedisUtils
 	public static String setMap(String key, Map<String, String> value, int cacheSeconds)
 	{
 		String result = null;
-		Jedis jedis = null;
+		ShardedJedis jedis = null;
 		try
 		{
 			jedis = getResource();
@@ -732,7 +740,7 @@ public class JedisUtils
 	public static String setObjectMap(String key, Map<String, Object> value, int cacheSeconds)
 	{
 		String result = null;
-		Jedis jedis = null;
+		ShardedJedis jedis = null;
 		try
 		{
 			jedis = getResource();
@@ -773,7 +781,7 @@ public class JedisUtils
 	public static String mapPut(String key, Map<String, String> value)
 	{
 		String result = null;
-		Jedis jedis = null;
+		ShardedJedis jedis = null;
 		try
 		{
 			jedis = getResource();
@@ -801,7 +809,7 @@ public class JedisUtils
 	public static String mapObjectPut(String key, Map<String, Object> value)
 	{
 		String result = null;
-		Jedis jedis = null;
+		ShardedJedis jedis = null;
 		try
 		{
 			jedis = getResource();
@@ -834,7 +842,7 @@ public class JedisUtils
 	public static long mapRemove(String key, String mapKey)
 	{
 		long result = 0;
-		Jedis jedis = null;
+		ShardedJedis jedis = null;
 		try
 		{
 			jedis = getResource();
@@ -862,7 +870,7 @@ public class JedisUtils
 	public static long mapObjectRemove(String key, String mapKey)
 	{
 		long result = 0;
-		Jedis jedis = null;
+		ShardedJedis jedis = null;
 		try
 		{
 			jedis = getResource();
@@ -890,7 +898,7 @@ public class JedisUtils
 	public static boolean mapExists(String key, String mapKey)
 	{
 		boolean result = false;
-		Jedis jedis = null;
+		ShardedJedis jedis = null;
 		try
 		{
 			jedis = getResource();
@@ -918,7 +926,7 @@ public class JedisUtils
 	public static boolean mapObjectExists(String key, String mapKey)
 	{
 		boolean result = false;
-		Jedis jedis = null;
+		ShardedJedis jedis = null;
 		try
 		{
 			jedis = getResource();
@@ -944,7 +952,7 @@ public class JedisUtils
 	public static long del(String key)
 	{
 		long result = 0;
-		Jedis jedis = null;
+		ShardedJedis jedis = null;
 		try
 		{
 			jedis = getResource();
@@ -976,7 +984,7 @@ public class JedisUtils
 	public static long delObject(String key)
 	{
 		long result = 0;
-		Jedis jedis = null;
+		ShardedJedis jedis = null;
 		try
 		{
 			jedis = getResource();
@@ -1008,7 +1016,7 @@ public class JedisUtils
 	public static boolean exists(String key)
 	{
 		boolean result = false;
-		Jedis jedis = null;
+		ShardedJedis jedis = null;
 		try
 		{
 			jedis = getResource();
@@ -1034,7 +1042,7 @@ public class JedisUtils
 	public static boolean existsObject(String key)
 	{
 		boolean result = false;
-		Jedis jedis = null;
+		ShardedJedis jedis = null;
 		try
 		{
 			jedis = getResource();
@@ -1056,12 +1064,12 @@ public class JedisUtils
 	 * @return
 	 * @throws JedisException
 	 */
-	public static Jedis getResource() throws JedisException
+	public static ShardedJedis getResource() throws JedisException
 	{
-		Jedis jedis = null;
+		ShardedJedis jedis = null;
 		try
 		{
-			jedis = jedisPool.getResource();
+			jedis = shardedJedisPool.getResource();
 			// log.debug("getResource.", jedis);
 		} catch (JedisException e)
 		{
@@ -1079,11 +1087,11 @@ public class JedisUtils
 	 * @param isBroken
 	 */
 	@SuppressWarnings("deprecation")
-	public static void returnBrokenResource(Jedis jedis)
+	public static void returnBrokenResource(ShardedJedis jedis)
 	{
 		if (jedis != null)
 		{
-			jedisPool.returnBrokenResource(jedis);
+            shardedJedisPool.returnBrokenResource(jedis);
 		}
 	}
 
@@ -1094,11 +1102,11 @@ public class JedisUtils
 	 * @param isBroken
 	 */
 	@SuppressWarnings("deprecation")
-	public static void returnResource(Jedis jedis)
+	public static void returnResource(ShardedJedis jedis)
 	{
 		if (jedis != null)
 		{
-			jedisPool.returnResource(jedis);
+			shardedJedisPool.returnResource(jedis);
 		}
 	}
 	
