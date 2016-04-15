@@ -1,5 +1,7 @@
 package cn.eakay.commons.base;
 
+import org.joda.time.DateTime;
+
 import java.io.Serializable;
 import java.util.Date;
 import java.util.HashMap;
@@ -12,9 +14,9 @@ public abstract class BaseDO implements Serializable {
 
     protected Long id;
 
-    protected Date createTime;
+    protected DateTime createTime = DateTime.now();
 
-    protected Date updateTime;
+    protected DateTime updateTime = DateTime.now();
 
     public Long getId() {
         return id;
@@ -24,19 +26,19 @@ public abstract class BaseDO implements Serializable {
         this.id = id;
     }
 
-    public Date getCreateTime() {
+    public DateTime getCreateTime() {
         return createTime;
     }
 
-    public void setCreateTime(Date createTime) {
+    public void setCreateTime(DateTime createTime) {
         this.createTime = createTime;
     }
 
-    public Date getUpdateTime() {
+    public DateTime getUpdateTime() {
         return updateTime;
     }
 
-    public void setUpdateTime(Date updateTime) {
+    public void setUpdateTime(DateTime updateTime) {
         this.updateTime = updateTime;
     }
 
