@@ -50,10 +50,6 @@ public class ResultDO implements Serializable {
         this.success = success;
     }
 
-    public boolean isFailure() {
-        return !success;
-    }
-
     public void format(String arg1) {
         this.setErrorMsg(String.format(this.getErrorMsg(), arg1));
         this.setErrorMsg(String.format(this.getErrorMsg(), arg1));

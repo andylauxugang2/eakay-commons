@@ -61,7 +61,7 @@ public class ValidationAspect {
             if (rst instanceof ResultDO) {
                 ResultDO r = (ResultDO) rst;
                 //可以添加tracer log
-                if (r.isFailure()) {
+                if (!r.isSuccess()) {
                     log.error(targetName + ":" + method.getName() + " call error:" + r.toString());
                 }
             }
