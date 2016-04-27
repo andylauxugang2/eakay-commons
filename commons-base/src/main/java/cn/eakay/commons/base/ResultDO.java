@@ -1,5 +1,8 @@
 package cn.eakay.commons.base;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.io.Serializable;
 
 /**
@@ -8,6 +11,7 @@ import java.io.Serializable;
  */
 public class ResultDO implements Serializable {
 
+    @JsonProperty("success")
     private boolean success;
 
     /**
@@ -42,6 +46,7 @@ public class ResultDO implements Serializable {
         this.errorMsg = errorMsg;
     }
 
+    @JsonIgnore
     public boolean isSuccess() {
         return success;
     }
